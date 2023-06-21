@@ -1,21 +1,27 @@
-import { initializeApp } from "firebase/app";
+import { initializeApp, getApps } from "firebase/app";
 import { getAuth, connectAuthEmulator } from "firebase/auth";
 import { getFirestore, connectFirestoreEmulator } from "firebase/firestore";
 import { config } from "./config";
 
-const initialize = () => {
-  const firebase = initializeApp(config.firebase);
-  const auth = getAuth(firebase);
-  const firestore = getFirestore(firebase);
+function initialize() {
+  const firebaseApp = initializeApp(config.firebase);
+  const auth = getAuth(firebaseApp);
+  const firestore = getFirestore(firebaseApp);
+  return { firebaseApp, auth, firestore };
+}
 
+function connectToEmulators({ firebaseApp, auth, firestore }) {
   if (location.hostname === "localhost") {
     connectAuthEmulator(auth, "http://localhost:9099", {
       disableWarnings: true,
     });
-    connectFirestoreEmulator(firestore, "localhost", 9000);
+    connectFirestoreEmulator(firestore, "localhost", 8080);
   }
+  return { firebaseApp, auth, firestore };
+}
 
-  return { firebase, auth, firestore };
-};
-
-export default initialize;
+export function getFirebase() {
+  const existingApp = getApps().at(0);
+  if (existingApp) return initialize();
+  return connectToEmulators(initialize());
+}
