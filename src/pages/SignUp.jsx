@@ -1,18 +1,10 @@
 import React, { useState, useContext } from "react";
-import {
-  createUserWithEmailAndPassword,
-  signInWithPopup,
-  GoogleAuthProvider,
-} from "firebase/auth";
 import { NavLink } from "react-router-dom";
 import { AuthContext } from "../context/AuthContext";
-import { getFirebase } from "../firebase";
 
 const SignUp = () => {
-  const { auth } = getFirebase();
-  const googleProvier = new GoogleAuthProvider(auth);
+  const { state, emailSignUp, googleSignUp } = useContext(AuthContext);
 
-  const [_, setUser] = useContext(AuthContext);
   const [input, setInput] = useState({
     email: "",
     password: "",
@@ -28,31 +20,7 @@ const SignUp = () => {
 
   const submitHandler = async (e) => {
     e.preventDefault();
-    const result = await createUserWithEmailAndPassword(
-      auth,
-      input.email,
-      input.password
-    );
-    localStorage.setItem(
-      "firebase_token",
-      JSON.stringify(result._tokenResponse)
-    );
-    setUser((prevState) => ({
-      ...prevState,
-      user: result.user,
-    }));
-  };
-
-  const googleSignUpHandler = async () => {
-    const result = await signInWithPopup(auth, googleProvier);
-    localStorage.setItem(
-      "firebase_token",
-      JSON.stringify(result._tokenResponse)
-    );
-    setUser((prevState) => ({
-      ...prevState,
-      user: result.user,
-    }));
+    emailSignUp(input.email, input.password);
   };
 
   return (
@@ -95,7 +63,7 @@ const SignUp = () => {
 
       <button
         className="block w-full p-2 text-center border rounded border-emerald-600"
-        onClick={googleSignUpHandler}
+        onClick={googleSignUp}
       >
         sign up with google
       </button>

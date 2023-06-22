@@ -1,8 +1,10 @@
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import { NavLink } from "react-router-dom";
-import { auth } from "firebase/auth";
+import { AuthContext } from "../context/AuthContext";
 
 const SignIn = () => {
+  const { state, emailSignIn, googleSignIn } = useContext(AuthContext);
+
   const [input, setInput] = useState({
     email: "",
     password: "",
@@ -16,11 +18,10 @@ const SignIn = () => {
     }));
   };
 
-  const submitHandler = (e) => {
+  const submitHandler = async (e) => {
     e.preventDefault();
+    emailSignIn(input.email, input.password);
   };
-
-  const googleSignInHandler = () => {};
 
   return (
     <div className="max-w-xs mx-auto mt-64">
@@ -67,7 +68,7 @@ const SignIn = () => {
 
       <button
         className="block w-full p-2 text-center border rounded border-emerald-600"
-        onClick={googleSignInHandler}
+        onClick={googleSignIn}
       >
         sign in with google
       </button>
