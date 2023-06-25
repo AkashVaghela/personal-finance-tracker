@@ -1,4 +1,4 @@
-import { useReducer, createContext } from "react";
+import { useEffect, useReducer, createContext } from "react";
 import {
   signOut,
   createUserWithEmailAndPassword,
@@ -10,17 +10,30 @@ import { getFirebase } from "../firebase";
 
 export const AuthContext = createContext();
 
+const setUser  = (payload) => {
+  localStorage.setItem("user", JSON.stringify(payload));
+};
+
+const removeUser  = () => {
+  localStorage.removeItem("user");
+};
+
 const authReducer = (state, action) => {
   switch (action.type) {
     case "SIGN_UP_WITH_EMAIL":
+      setUser(action.payload);
       return { ...state, user: action.payload };
     case "SIGN_UP_WITH_GOOGLE":
+      setUser(action.payload);
       return { ...state, user: action.payload };
     case "SIGN_IN_WITH_EMAIL":
+      setUser(action.payload);
       return { ...state, user: action.payload };
     case "SIGN_IN_WITH_GOOGLE":
+      setUser(action.payload);
       return { ...state, user: action.payload };
     case "SIGN_OUT":
+      removeUser();
       return { ...state, user: null };
     default:
       return state;
@@ -30,10 +43,19 @@ const authReducer = (state, action) => {
 // eslint-disable-next-line react/prop-types
 const AuthContextProvider = ({ children }) => {
   const { auth } = getFirebase();
-  const googleProvier = new GoogleAuthProvider(auth);
+  const googleProvider = new GoogleAuthProvider(auth);
 
   const initialState = { user: null };
   const [state, dispatch] = useReducer(authReducer, initialState);
+
+
+  useEffect(() => {
+    const storedUser = localStorage.getItem("user");
+
+    if(storedUser) {
+      dispatch({type: "SIGN_IN_WITH_EMAIL", payload: JSON.parse(storedUser)});
+    } 
+  }, [])
 
   const emailSignUp = async (email, password) => {
     const userCredential = await createUserWithEmailAndPassword(
@@ -45,7 +67,7 @@ const AuthContextProvider = ({ children }) => {
   };
 
   const googleSignUp = async () => {
-    const userCredential = await signInWithPopup(auth, googleProvier);
+    const userCredential = await signInWithPopup(auth, googleProvider);
     dispatch({ type: "SIGN_UP_WITH_GOOGLE", payload: userCredential.user });
   };
 
@@ -59,7 +81,7 @@ const AuthContextProvider = ({ children }) => {
   };
 
   const googleSignIn = async () => {
-    const userCredential = await signInWithPopup(auth, googleProvier);
+    const userCredential = await signInWithPopup(auth, googleProvider);
     dispatch({ type: "SIGN_IN_WITH_GOOGLE", payload: userCredential.user });
   };
 

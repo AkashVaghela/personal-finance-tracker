@@ -1,10 +1,10 @@
 import React, { useState, useContext } from "react";
-import { NavLink } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
 import { AuthContext } from "../context/AuthContext";
 
 const SignIn = () => {
+  const navigate = useNavigate();
   const { state, emailSignIn, googleSignIn } = useContext(AuthContext);
-
   const [input, setInput] = useState({
     email: "",
     password: "",
@@ -21,7 +21,13 @@ const SignIn = () => {
   const submitHandler = async (e) => {
     e.preventDefault();
     emailSignIn(input.email, input.password);
+    navigate("/dashboard");
   };
+
+  const googleSignInHandler = () => {
+    googleSignIn();
+    navigate("/dashboard");
+  }
 
   return (
     <div className="max-w-xs mx-auto mt-64">
@@ -51,7 +57,7 @@ const SignIn = () => {
         </p>
         <button
           type="submit"
-          className="p-2 text-gray-100 capitalize rounded bg-emerald-600"
+          className="p-2 text-gray-100 capitalize rounded bg-green-600"
         >
           sign in
         </button>
@@ -60,15 +66,15 @@ const SignIn = () => {
       <p className="mb-6 text-gray-600">
         Do not have account?
         <span className="pl-1 underline">
-          <NavLink to="/">create account</NavLink>
+          <NavLink to="/signup">create account</NavLink>
         </span>
       </p>
 
       <span className="block mb-6 text-center uppercase">or</span>
 
       <button
-        className="block w-full p-2 text-center border rounded border-emerald-600"
-        onClick={googleSignIn}
+        className="block w-full p-2 text-center border rounded border-green-600"
+        onClick={googleSignInHandler}
       >
         sign in with google
       </button>
