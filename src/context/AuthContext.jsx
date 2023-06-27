@@ -6,24 +6,22 @@ import {
   signInWithPopup,
   GoogleAuthProvider,
 } from "firebase/auth";
+import useUserNavigation from "../hooks/useUserNavigation";
 import { getFirebase } from "../firebase";
 
 export const AuthContext = createContext();
 
-const setUser  = (payload) => {
+const setUser = (payload) => {
   localStorage.setItem("user", JSON.stringify(payload));
 };
 
-const removeUser  = () => {
+const removeUser = () => {
   localStorage.removeItem("user");
 };
 
 const authReducer = (state, action) => {
   switch (action.type) {
     case "SIGN_UP_WITH_EMAIL":
-      setUser(action.payload);
-      return { ...state, user: action.payload };
-    case "SIGN_UP_WITH_GOOGLE":
       setUser(action.payload);
       return { ...state, user: action.payload };
     case "SIGN_IN_WITH_EMAIL":
@@ -43,19 +41,23 @@ const authReducer = (state, action) => {
 // eslint-disable-next-line react/prop-types
 const AuthContextProvider = ({ children }) => {
   const { auth } = getFirebase();
+  const { navigateToDashboard, navigateToSignUp, navigateToSignIn } =
+    useUserNavigation();
   const googleProvider = new GoogleAuthProvider(auth);
 
   const initialState = { user: null };
   const [state, dispatch] = useReducer(authReducer, initialState);
 
-
   useEffect(() => {
     const storedUser = localStorage.getItem("user");
 
-    if(storedUser) {
-      dispatch({type: "SIGN_IN_WITH_EMAIL", payload: JSON.parse(storedUser)});
-    } 
-  }, [])
+    if (storedUser) {
+      dispatch({ type: "SIGN_IN_WITH_EMAIL", payload: JSON.parse(storedUser) });
+      navigateToDashboard();
+    } else {
+      navigateToSignIn();
+    }
+  }, []);
 
   const emailSignUp = async (email, password) => {
     const userCredential = await createUserWithEmailAndPassword(
@@ -63,12 +65,10 @@ const AuthContextProvider = ({ children }) => {
       email,
       password
     );
-    dispatch({ type: "SIGN_UP_WITH_EMAIL", payload: userCredential.user });
-  };
-
-  const googleSignUp = async () => {
-    const userCredential = await signInWithPopup(auth, googleProvider);
-    dispatch({ type: "SIGN_UP_WITH_GOOGLE", payload: userCredential.user });
+    if (userCredential.user) {
+      dispatch({ type: "SIGN_UP_WITH_EMAIL", payload: userCredential.user });
+      navigateToDashboard();
+    }
   };
 
   const emailSignIn = async (email, password) => {
@@ -77,17 +77,24 @@ const AuthContextProvider = ({ children }) => {
       email,
       password
     );
-    dispatch({ type: "SIGN_IN_WITH_EMAIL", payload: userCredential.user });
+    if (userCredential.user) {
+      dispatch({ type: "SIGN_IN_WITH_EMAIL", payload: userCredential.user });
+      navigateToDashboard();
+    }
   };
 
   const googleSignIn = async () => {
     const userCredential = await signInWithPopup(auth, googleProvider);
-    dispatch({ type: "SIGN_IN_WITH_GOOGLE", payload: userCredential.user });
+    if (userCredential.operationType === "signIn") {
+      dispatch({ type: "SIGN_IN_WITH_GOOGLE", payload: userCredential.user });
+      navigateToDashboard();
+    }
   };
 
   const signOutUser = async () => {
     await signOut(auth);
     dispatch({ type: "SIGN_OUT" });
+    navigateToSignUp();
   };
 
   return (
@@ -95,7 +102,6 @@ const AuthContextProvider = ({ children }) => {
       value={{
         state,
         emailSignUp,
-        googleSignUp,
         emailSignIn,
         googleSignIn,
         signOutUser,

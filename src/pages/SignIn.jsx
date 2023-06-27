@@ -21,13 +21,11 @@ const SignIn = () => {
   const submitHandler = async (e) => {
     e.preventDefault();
     emailSignIn(input.email, input.password);
-    navigate("/dashboard");
   };
 
   const googleSignInHandler = () => {
     googleSignIn();
-    navigate("/dashboard");
-  }
+  };
 
   return (
     <div className="max-w-xs mx-auto mt-64">
@@ -57,7 +55,7 @@ const SignIn = () => {
         </p>
         <button
           type="submit"
-          className="p-2 text-gray-100 capitalize rounded bg-green-600"
+          className="p-2 text-gray-100 capitalize bg-green-600 rounded"
         >
           sign in
         </button>
@@ -73,7 +71,7 @@ const SignIn = () => {
       <span className="block mb-6 text-center uppercase">or</span>
 
       <button
-        className="block w-full p-2 text-center border rounded border-green-600"
+        className="block w-full p-2 text-center border border-green-600 rounded"
         onClick={googleSignInHandler}
       >
         sign in with google

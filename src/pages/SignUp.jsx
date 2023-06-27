@@ -4,7 +4,7 @@ import { AuthContext } from "../context/AuthContext";
 
 const SignUp = () => {
   const navigate = useNavigate();
-  const { state, emailSignUp, googleSignUp } = useContext(AuthContext);
+  const { state, emailSignUp, googleSignIn } = useContext(AuthContext);
   const [input, setInput] = useState({
     email: "",
     password: "",
@@ -21,13 +21,11 @@ const SignUp = () => {
   const submitHandler = async (e) => {
     e.preventDefault();
     emailSignUp(input.email, input.password);
-    navigate("/dashboard");
   };
 
   const googleSignUpHandler = () => {
-    googleSignUp();
-    navigate("/dashboard");
-  }
+    googleSignIn();
+  };
 
   return (
     <div className="max-w-xs mx-auto mt-64">
@@ -52,7 +50,7 @@ const SignUp = () => {
         />
         <button
           type="submit"
-          className="p-2 text-gray-100 capitalize rounded bg-green-600"
+          className="p-2 text-gray-100 capitalize bg-green-600 rounded"
         >
           create account
         </button>
@@ -68,7 +66,7 @@ const SignUp = () => {
       <span className="block mb-6 text-center uppercase">or</span>
 
       <button
-        className="block w-full p-2 text-center border rounded border-green-600"
+        className="block w-full p-2 text-center border border-green-600 rounded"
         onClick={googleSignUpHandler}
       >
         sign up with google
