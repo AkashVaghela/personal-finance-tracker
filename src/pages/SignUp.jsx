@@ -28,49 +28,51 @@ const SignUp = () => {
   };
 
   return (
-    <div className="max-w-xs mx-auto mt-64">
-      <form className="flex flex-col gap-4 mb-4" onSubmit={submitHandler}>
-        <input
-          type="email"
-          name="email"
-          value={input.email}
-          onChange={changeHandler}
-          id="email"
-          placeholder="email"
-          className="p-2 border rounded"
-        />
-        <input
-          type="password"
-          name="password"
-          value={input.password}
-          onChange={changeHandler}
-          id="password"
-          placeholder="password"
-          className="p-2 border rounded"
-        />
+    <div className="grid h-screen place-items-center">
+      <div className="w-11/12 mx-auto mobile-l:w-80">
+        <form className="flex flex-col gap-4 mb-4" onSubmit={submitHandler}>
+          <input
+            type="email"
+            name="email"
+            value={input.email}
+            onChange={changeHandler}
+            id="email"
+            placeholder="email"
+            className="p-2 border rounded"
+          />
+          <input
+            type="password"
+            name="password"
+            value={input.password}
+            onChange={changeHandler}
+            id="password"
+            placeholder="password"
+            className="p-2 border rounded"
+          />
+          <button
+            type="submit"
+            className="p-2 text-gray-100 capitalize bg-green-600 rounded"
+          >
+            create account
+          </button>
+        </form>
+
+        <p className="mb-6 text-gray-600">
+          already have an account?
+          <span className="pl-1 underline">
+            <NavLink to="/signin">sign in</NavLink>
+          </span>
+        </p>
+
+        <span className="block mb-6 text-center uppercase">or</span>
+
         <button
-          type="submit"
-          className="p-2 text-gray-100 capitalize bg-green-600 rounded"
+          className="block w-full p-2 text-center border border-green-600 rounded"
+          onClick={googleSignUpHandler}
         >
-          create account
+          continue with google
         </button>
-      </form>
-
-      <p className="mb-6 text-gray-600">
-        already have an account?
-        <span className="pl-1 underline">
-          <NavLink to="/signin">sign in</NavLink>
-        </span>
-      </p>
-
-      <span className="block mb-6 text-center uppercase">or</span>
-
-      <button
-        className="block w-full p-2 text-center border border-green-600 rounded"
-        onClick={googleSignUpHandler}
-      >
-        sign up with google
-      </button>
+      </div>
     </div>
   );
 };
