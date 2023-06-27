@@ -4,6 +4,8 @@ import SignIn from "./pages/SignIn";
 import ForgotPassword from "./pages/ForgotPassword";
 import Dashboard from "./pages/Dashboard";
 import Transactions from "./pages/Transactions";
+import AddTransaction from "./pages/AddTransaction";
+import Analysis from "./pages/Analysis";
 
 function App() {
   return (
@@ -13,6 +15,8 @@ function App() {
       <Route path="/forgot-password" element={<ForgotPassword />} />
       <Route path="/dashboard" element={<Dashboard />} />
       <Route path="/transactions" element={<Transactions />} />
+      <Route path="/transactions/add" element={<AddTransaction />} />
+      <Route path="/analysis" element={<Analysis />} />
     </Routes>
   );
 }

@@ -29,7 +29,7 @@ const SignIn = () => {
 
   return (
     <div className="grid h-screen place-items-center">
-      <div className="w-11/12 mx-auto mobile-l:w-80">
+      <div className="w-[90vw] mx-auto mobile-l:w-80">
         <form className="flex flex-col gap-4 mb-4" onSubmit={submitHandler}>
           <input
             type="email"
