@@ -25,7 +25,7 @@ const AddTransaction = () => {
 
   const submitHandler = (e) => {
     e.preventDefault();
-    setDoc(singleTransaction, { ...transaction, userId: state.user.uid });
+    setDoc(singleTransaction, { ...transaction, userId: state?.user?.uid });
     navigate("/transactions");
   };
 
@@ -41,10 +41,12 @@ const AddTransaction = () => {
           <NavLink to="/dashboard">
             <MdOutlineArrowBack
               title="account"
-              className="w-8 h-8 text-gray-500"
+              className="w-6 h-6 text-gray-800"
             />
           </NavLink>
-          <h1>add transaction</h1>
+          <h1 className="font-semibold text-[18px] capitalize leading-[24px]">
+            add transaction
+          </h1>
         </div>
 
         <form onSubmit={submitHandler}>

@@ -65,9 +65,14 @@ const Dashboard = () => {
   };
 
   return (
-    <div className="relative w-full min-h-screen bg-gray-50">
-      <header className="flex justify-end gap-4 px-4 py-2 mb-4 align-middle border-b">
-        <NavLink to="/transactions/add">add transaction</NavLink>
+    <div className="relative w-full min-h-screen bg-gray-100">
+      <header className="flex justify-end gap-4 px-4 py-2 mb-4 align-middle border-b border-gray-300">
+        <NavLink
+          to="/transactions/add"
+          className="px-4 py-2 font-medium text-[14px] capitalize bg-indigo-500 rounded-xl text-gray-200"
+        >
+          add transaction
+        </NavLink>
         <button
           onClick={() => {
             setDrawer(!drawer);
@@ -75,7 +80,7 @@ const Dashboard = () => {
         >
           <MdOutlineAccountCircle
             title="account"
-            className="w-8 h-8 text-gray-500"
+            className="text-gray-800 w-7 h-7"
           />
         </button>
       </header>
@@ -88,7 +93,7 @@ const Dashboard = () => {
                 setDrawer(!drawer);
               }}
             >
-              <MdOutlineClose title="close" className="w-8 h-8 text-gray-500" />
+              <MdOutlineClose title="close" className="w-6 h-6 text-gray-800" />
             </button>
           </div>
           <div className="flex flex-col">

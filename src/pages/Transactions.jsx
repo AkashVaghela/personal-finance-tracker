@@ -4,6 +4,12 @@ import { MdOutlineArrowBack } from "react-icons/md";
 import { TransactionsContext } from "../context/TransactionsContext";
 import { IoFastFoodOutline } from "react-icons/io5";
 
+const formatDate = (dateString) => {
+  const options = { day: "numeric", month: "long", year: "numeric" };
+  const date = new Date(dateString);
+  return date.toLocaleDateString("en-US", options);
+};
+
 const Transactions = () => {
   const { transactionState } = useContext(TransactionsContext);
   const [transactions, setTransactions] = useState([]);
@@ -57,46 +63,62 @@ const Transactions = () => {
   }, [transactionState]);
 
   return (
-    <div className="w-full min-h-screen bg-gray-50">
-      <div className="w-[90vw] mx-auto max-w-5xl">
-        <div className="flex gap-1 py-2 align-middle">
+    <div className="w-full min-h-screen bg-gray-100">
+      <div className="w-[90vw] mx-auto max-w-2xl">
+        <div className="flex gap-1 py-4 align-middle">
           <NavLink to="/dashboard">
             <MdOutlineArrowBack
               title="account"
-              className="w-8 h-8 text-gray-500"
+              className="w-6 h-6 text-gray-800"
             />
           </NavLink>
-          <h1>transactions</h1>
+          <h1 className="font-semibold text-[18px] capitalize leading-[24px]">
+            transactions
+          </h1>
         </div>
         <div>
           {transactions.length > 0
             ? transactions.map((item, index) => {
                 return (
-                  <div key={index} className="rounded shadow">
-                    <div className="flex justify-between px-4 py-2 align-middle border-b">
-                      <p>{item.date}</p>
-                      <p>
+                  <div
+                    key={index}
+                    className="mb-2 border border-gray-300 rounded"
+                  >
+                    <div className="flex justify-between px-4 py-2 font-semibold text-gray-800 align-middle border-b border-gray-300">
+                      <p>{formatDate(item.date)}</p>
+                      <p
+                        className={`${
+                          item.type === "income"
+                            ? "text-emerald-500"
+                            : "text-pink-500"
+                        } font-semibold`}
+                      >
+                        {item.type === "income" ? "\u002B" : "\u2212"}
                         {item.transactions.reduce((acc, item) => {
                           return (acc += +item.amount);
                         }, 0)}
                       </p>
                     </div>
                     <div>
-                      {item.transactions.map((item, index) => {
+                      {item.transactions.map((transaction, index) => {
                         return (
                           <div
                             key={index}
-                            className="flex gap-2 px-4 py-2 align-center"
+                            className="flex gap-4 px-4 py-3 align-center"
                           >
-                            <div className="self-center">
-                              <IoFastFoodOutline />
+                            <div className="self-center p-2 rounded bg-emerald-500">
+                              <IoFastFoodOutline className="block w-6 h-6" />
                             </div>
-                            <div className="w-full capitalize truncate bg-green-200 grow">
-                              <p>{item.category}</p>
-                              <p>{item.note}</p>
+                            <div className="w-full capitalize truncate grow">
+                              <p className="font-medium text-gray-600">
+                                {transaction.category}
+                              </p>
+                              <p className="text-gray-400 text-[14px]">
+                                {transaction.note}
+                              </p>
                             </div>
                             <div>
-                              <p>{item.amount}</p>
+                              <p>{transaction.amount}</p>
                             </div>
                           </div>
                         );
