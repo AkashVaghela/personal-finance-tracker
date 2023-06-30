@@ -1,5 +1,5 @@
-import { createContext, useReducer, useEffect } from "react";
-import { collection, onSnapshot } from "firebase/firestore";
+import { createContext, useReducer, useEffect, useState } from "react";
+import { collection, onSnapshot, query, where } from "firebase/firestore";
 import { getFirebase } from "../firebase";
 
 export const TransactionsContext = createContext();
@@ -22,32 +22,35 @@ const transactionsReducer = (state, action) => {
 // eslint-disable-next-line react/prop-types
 const TransactionsContextProvider = ({ children }) => {
   const { firestore } = getFirebase();
-  const transactionsCol = collection(firestore, "transactions");
-
-  const initialState = [];
-  const [transactionState, dispatch] = useReducer(
-    transactionsReducer,
-    initialState
-  );
+  const [userId, setUserId] = useState();
+  const [transactionState, dispatch] = useReducer(transactionsReducer, []);
 
   useEffect(() => {
-    onSnapshot(transactionsCol, (snapshot) => {
-      if (snapshot.docs.length > 0) {
-        const transactions = [];
-        snapshot.docs.forEach((doc) => {
-          const data = doc.data();
-        });
-        setTransactions({ type: "SET_TRANSACTIONS", payload: transactions });
-      }
-    });
-  }, []);
+    const user = JSON.parse(localStorage.getItem("user"));
+    if (user) {
+      setUserId(user?.uid);
+    }
+  }, [userId]);
 
-  const setTransactions = (data) => {
-    dispatch({ type: "SET_TRANSACTIONS", payload: data });
-  };
+  useEffect(() => {
+    if (userId) {
+      const transactionsCol = collection(firestore, "transactions");
+      const queryRef = query(transactionsCol, where("userId", "==", userId));
+      onSnapshot(queryRef, (snapshot) => {
+        if (snapshot.docs.length > 0) {
+          const transactions = [];
+          snapshot.docs.forEach((doc) => {
+            const data = doc.data();
+            transactions.push({ ...data, id: doc.id });
+          });
+          dispatch({ type: "SET_TRANSACTIONS", payload: transactions });
+        }
+      });
+    }
+  }, [userId]);
 
   return (
-    <TransactionsContext.Provider value={{ transactionState, setTransactions }}>
+    <TransactionsContext.Provider value={{ transactionState }}>
       {children}
     </TransactionsContext.Provider>
   );

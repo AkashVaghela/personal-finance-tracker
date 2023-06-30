@@ -1,4 +1,4 @@
-import { useEffect, useReducer, createContext } from "react";
+import { useEffect, useReducer, createContext, useState } from "react";
 import {
   signOut,
   createUserWithEmailAndPassword,
@@ -49,15 +49,10 @@ const AuthContextProvider = ({ children }) => {
   const [state, dispatch] = useReducer(authReducer, initialState);
 
   useEffect(() => {
-    const storedUser = localStorage.getItem("user");
+    const user = JSON.parse(localStorage.getItem("user"));
 
-    if (storedUser) {
-      dispatch({ type: "SIGN_IN_WITH_EMAIL", payload: JSON.parse(storedUser) });
-      navigateToDashboard();
-    } else {
-      navigateToSignIn();
-    }
-  }, []);
+    return user?.uid ? navigateToDashboard() : navigateToSignIn();
+  }, [state]);
 
   const emailSignUp = async (email, password) => {
     const userCredential = await createUserWithEmailAndPassword(

@@ -1,6 +1,7 @@
-import { useState, useContext } from "react";
+import { useState, useContext, useEffect } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
 import { AuthContext } from "../context/AuthContext";
+import { TransactionsContext } from "../context/TransactionsContext";
 import { MdOutlineAccountCircle, MdOutlineClose } from "react-icons/md";
 
 const navbar = [
@@ -16,22 +17,47 @@ const navbar = [
   },
 ];
 
-const transactions = [
-  {
-    id: 1,
-    category: "food",
-    amount: "amount",
-    details: "Details",
-    date: "01/01/2022",
-  },
-];
-
-// group items by same date here
-
 const Dashboard = () => {
   const navigate = useNavigate();
   const [drawer, setDrawer] = useState(false);
+  const [stats, setStats] = useState({
+    totalIncome: 0,
+    totalExpense: 0,
+    totalBalance: 0,
+  });
   const { state, signOutUser } = useContext(AuthContext);
+  const { transactionState } = useContext(TransactionsContext);
+
+  useEffect(() => {
+    if (!transactionState.length) return;
+
+    const stats = transactionState.reduce(
+      (acc, item) => {
+        switch (item.type) {
+          case "income":
+            return { ...acc, totalIncome: acc.totalIncome + +item.amount };
+          case "expense":
+            return {
+              ...acc,
+              totalExpense: acc.totalExpense + +item.amount,
+            };
+          default:
+            throw new Error("Invalid transaction type.");
+        }
+      },
+      { totalIncome: 0, totalExpense: 0 }
+    );
+
+    const updatedStats = {
+      ...stats,
+      totalBalance: stats.totalIncome - stats.totalExpense,
+    };
+
+    setStats((prev) => ({
+      ...prev,
+      ...updatedStats,
+    }));
+  }, [transactionState]);
 
   const signOutUserHandler = () => {
     signOutUser();
@@ -93,11 +119,15 @@ const Dashboard = () => {
 
       <div className="w-[90vw] mx-auto max-w-5xl">
         <div className="flex flex-col gap-1 mb-4 tablet:flex-row tablet:gap-2 laptop:gap-4">
-          <div className="w-full p-2 mb-2 bg-blue-400 rounded shadow-sm">1</div>
-          <div className="w-full p-2 mb-2 bg-orange-400 rounded shadow-sm">
-            2
+          <div className="w-full p-2 mb-2 bg-blue-400 rounded shadow-sm">
+            {stats.totalBalance}
           </div>
-          <div className="w-full p-2 mb-2 bg-teal-400 rounded shadow-sm">3</div>
+          <div className="w-full p-2 mb-2 bg-orange-400 rounded shadow-sm">
+            {stats.totalExpense}
+          </div>
+          <div className="w-full p-2 mb-2 bg-teal-400 rounded shadow-sm">
+            {stats.totalIncome}
+          </div>
         </div>
         <div>
           <div className="flex justify-between px-2 py-4 align-middle">
