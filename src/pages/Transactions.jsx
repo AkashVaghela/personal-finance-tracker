@@ -1,8 +1,13 @@
-import React from "react";
+import React, { useContext } from "react";
 import { NavLink } from "react-router-dom";
 import { MdOutlineArrowBack } from "react-icons/md";
+import { TransactionsContext } from "../context/TransactionsContext";
 
 const Transactions = () => {
+  const { transactionState } = useContext(TransactionsContext);
+
+  console.log(transactionState, "transactionState");
+
   return (
     <div className="w-full min-h-screen bg-gray-50">
       <div className="w-[90vw] mx-auto max-w-5xl">

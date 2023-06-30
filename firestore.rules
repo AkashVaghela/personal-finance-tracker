@@ -15,5 +15,10 @@ service cloud.firestore {
     match /{document=**} {
       allow read, write: if false;
     }
+    match /transactions/{id} {
+      // allow write: if request.auth.uid != null;
+      allow write: if true;
+      allow read: if true;
+    }
   }
 }
