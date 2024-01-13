@@ -51,7 +51,7 @@ const AuthContextProvider = ({ children }) => {
   useEffect(() => {
     const user = JSON.parse(localStorage.getItem("user"));
 
-    return user?.uid ? navigateToDashboard() : navigateToSignIn();
+    // return user?.uid ? navigateToDashboard() : navigateToSignIn();
   }, [state]);
 
   const emailSignUp = async (email, password) => {
